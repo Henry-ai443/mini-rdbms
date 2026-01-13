@@ -1,56 +1,47 @@
 # db/repl.py
 
-import os
-from db.catalog import Catalog
-from db.storage import Storage
-from db.parser import Parser, ParseError
-from db.executor import Executor
+from db.engine import DatabaseEngine
 
-def start_repl(data_dir: str = "data"):
-    os.makedirs(data_dir, exist_ok=True)
-    catalog_path = os.path.join(data_dir, "catalog.json")
-    catalog = Catalog(catalog_path)
-    storage = Storage(catalog, data_dir)
-    parser = Parser()
-    executor = Executor(catalog, storage)
+def start_repl():
+    engine = DatabaseEngine()
 
     print("Mini RDBMS REPL")
     print("End commands with ';'")
     print("Type EXIT; to quit.\n")
 
-    buffer = ""  # For multi-line queries
+    command_buffer = ""
 
     while True:
         try:
             line = input("db> ").strip()
             if not line:
-                continue  # skip empty lines
-            # accumulate multi-line commands if needed
+                continue
+
             command_buffer += " " + line
+
             if ";" not in line:
-                continue  # wait for semicolon
+                continue
 
-            # full command is ready
-            full_command = command_buffer.strip()
-            command_buffer = ""  # reset buffer
+            sql = command_buffer.strip()
+            command_buffer = ""
 
-            if full_command.upper() == "EXIT;":
+            if sql.upper() == "EXIT;":
                 print("Bye!")
                 break
 
-            # remove trailing semicolon
-            if full_command.endswith(";"):
-                full_command = full_command[:-1]
+            if sql.endswith(";"):
+                sql = sql[:-1]
 
-            # parse and execute
-            parsed = parser.parse(full_command)
-            result = executor.execute(parsed)
-            print(result)
+            response = engine.execute_sql(sql)
 
-        except ParseError as e:
-            print(f"Parse error: {e}")
-        except Exception as e:
-            print(f"Error: {e}")
+            if response["status"] == "ok":
+                print(response["result"])
+            else:
+                print(f"{response['error_type'].capitalize()} error: {response['message']}")
+
+        except KeyboardInterrupt:
+            print("\nBye!")
+            break
 
 if __name__ == "__main__":
     start_repl()

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini RDBMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Mini RDBMS Web Console</h1>
+    </header>
+
+    <div id="container">
+        <aside id="sidebar">
+            <h2>Tables</h2>
+            <ul id="table-list"></ul>
+            <div id="table-actions">
+                <input type="text" id="new-table-name" placeholder="New table name">
+                <button id="create-table">Create Table</button>
+                <button id="drop-table">Drop Table</button>
+            </div>
+        </aside>
+
+        <!-- Create Table Modal -->
+<div id="create-table-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create Table</h2>
+        <input type="text" id="modal-table-name" placeholder="Table Name">
+        <div id="columns-container">
+            <div class="column-row">
+                <input type="text" placeholder="Column Name" class="col-name">
+                <select class="col-type">
+                    <option value="INT">INT</option>
+                    <option value="TEXT">TEXT</option>
+                    <option value="BOOL">BOOL</option>
+                </select>
+                <label><input type="checkbox" class="col-primary"> PK</label>
+                <label><input type="checkbox" class="col-unique"> Unique</label>
+                <button class="remove-col">Remove</button>
+            </div>
+        </div>
+        <button id="add-column">Add Column</button>
+        <button id="modal-create-table">Create Table</button>
+    </div>
+</div>
+
+<!-- Drop Table Modal -->
+<div id="drop-table-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Drop Table</h2>
+        <p>Are you sure you want to drop table <span id="drop-table-name"></span>?</p>
+        <button id="confirm-drop-table">Yes, Drop</button>
+        <button id="cancel-drop-table">Cancel</button>
+    </div>
+</div>
+
+<!-- Edit Row Modal -->
+<div id="edit-row-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Row</h2>
+        <div id="edit-row-container">
+            <!-- Inputs will be generated dynamically -->
+        </div>
+        <button id="save-row-changes">Save Changes</button>
+    </div>
+</div>
+
+
+        <main>
+            <section id="query-section">
+                <textarea id="sql" placeholder="Type your SQL query here..."></textarea>
+                <button id="run-query">Run Query</button>
+            </section>
+
+            <section id="result-section">
+                <h2>Result</h2>
+                <div id="result-container"></div>
+            </section>
+
+            <section id="history-section">
+                <h2>Query History</h2>
+                <ul id="query-history"></ul>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
